@@ -16,25 +16,25 @@ public:
   ~ThreeD();
   void MDLoop(int);
   void init();
-  void input();
+  //void input();
 //  void CNP();
   int N;
 
 private:
-  double m, dt, hdt, sigma, epsilon, t, tau, inv_m;//hdt = half dt
-  double kB, ke, pe, T, T0, Tt;
+  float m, dt, hdt, sigma, epsilon, t, tau, inv_m;//hdt = half dt
+  float kB, ke, pe, T, T0, Tt;
   int istep, ifreq, nunit, nstep, nall, s_tp, Crate;//s_tp = structure
   void force(int);
-  void output();
+  //void output();
   void cell_init(int);
   FILE *f1, *f2; 
   Memory *M;
   RanPark *rnd;
   string *cfg;
-  double **x, **f, **v;
-  double ncell[Dim];
-  double L[Dim];
-  double a0[Dim];
+  float **x, **f, **v;
+  float ncell[Dim];
+  float L[Dim];
+  float a0[Dim];
   char Atom[2];
 };
 

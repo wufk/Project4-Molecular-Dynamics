@@ -60,12 +60,12 @@ ThreeD::~ThreeD()
 /* ---------------------------------------------------------------------- */
 void ThreeD::cell_init(int k)
 {
-  double **cell = nullptr;
+  float **cell = nullptr;
   switch (k){
     case 1:{
     nall = nunit = 4;//fcc
     for(int i = 0; i < Dim; i++) nall *= ncell[i];
-    for(int i = 0; i < Dim; i++) L[i] = double(ncell[i]) * a0[i];  
+    for(int i = 0; i < Dim; i++) L[i] = float(ncell[i]) * a0[i];  
     M->create(cell, 4, 3, "cell");
     cell[0][0] = cell[0][1] = cell[0][2] = 0.0;
     cell[1][0] = 0.0        ; cell[1][1] = 0.5 * a0[1]; cell[1][2] = 0.5 * a0[2];
@@ -77,7 +77,7 @@ void ThreeD::cell_init(int k)
     case 2:{
     nall = nunit = 2;//bcc
     for(int i = 0; i < Dim; i++) nall *= ncell[i];
-    for(int i = 0; i < Dim; i++) L[i] = double(ncell[i]) * a0[i];  
+    for(int i = 0; i < Dim; i++) L[i] = float(ncell[i]) * a0[i];  
     M->create(cell, 2, 3, "cell");
     cell[0][0] = cell[0][1] = cell[0][2] = 0.;
     cell[1][0] = 0.5 * a0[0]; cell[1][1] = 0.5 * a0[1]; cell[1][2] = 0.5 * a0[2];
@@ -87,7 +87,7 @@ void ThreeD::cell_init(int k)
     case 3:{
     nall = nunit = 1;//simple cubic
     for(int i = 0; i < Dim; i++) nall *= ncell[i];
-    for(int i = 0; i < Dim; i++) L[i] = double(ncell[i]) * a0[i];  
+    for(int i = 0; i < Dim; i++) L[i] = float(ncell[i]) * a0[i];  
     M->create(cell, 1, 3, "cell");
     cell[0][0] = cell[0][1] = cell[0][2] = 0.;
     }
@@ -102,12 +102,12 @@ void ThreeD::cell_init(int k)
   for (int iy = 0; iy < ncell[1]; iy++)
   for (int iz = 0; iz < ncell[2]; iz++)
   for (int iu = 0; iu < nunit; iu++){
-    x[ii][0] = double(ix) * a0[0] + cell[iu][0];
-    x[ii][1] = double(iy) * a0[1] + cell[iu][1];
-    x[ii][2] = double(iz) * a0[2] + cell[iu][2];
+    x[ii][0] = float(ix) * a0[0] + cell[iu][0];
+    x[ii][1] = float(iy) * a0[1] + cell[iu][1];
+    x[ii][2] = float(iz) * a0[2] + cell[iu][2];
   //for(int k = 0; k < Dim; k++){ 
- //   x[ii][k] = double(ncell[k]) * a0[k] + cell[iu][k];
-    //x[ii][0] =double(ix) * d + cell[iu][0];// + rnd->gaussian() * 0.02 * d;
+ //   x[ii][k] = float(ncell[k]) * a0[k] + cell[iu][k];
+    //x[ii][0] =float(ix) * d + cell[iu][0];// + rnd->gaussian() * 0.02 * d;
   //} 
     ++ii;
   }
@@ -126,7 +126,7 @@ void ThreeD::init()
 
   //velocity init
   M->create(v, nall, Dim, "v");
-  double mon[Dim] = {0.0,0.0,0.0};//mean velocity
+  float mon[Dim] = {0.0,0.0,0.0};//mean velocity
   for(int i = 0; i < nall; i++)
   for(int j = 0; j < Dim; j++){
     v[i][j] = rnd->uniform() - 0.5;
@@ -135,7 +135,7 @@ void ThreeD::init()
 
   //printf("compute initial kinetic energy and temperature\n");  
   
-  for(int i = 0; i < 3; i++) mon[i] /= double(nall);
+  for(int i = 0; i < 3; i++) mon[i] /= float(nall);
   ke = 0.;
   for(int i = 0; i < nall; i++){
   for(int j = 0; j < 3; j++){
@@ -144,8 +144,8 @@ void ThreeD::init()
   }
   }
   ke *= 0.5 * m;
-  T = ke /(1.5 * double(nall) * kB);
-  double gama = sqrt(T0/T);
+  T = ke /(1.5 * float(nall) * kB);
+  float gama = sqrt(T0/T);
   
   ke = 0.0;
   for(int i = 0; i < nall; i++)
@@ -154,23 +154,23 @@ void ThreeD::init()
     ke += v[i][j]*v[i][j];
   }
   ke *= 0.5 * m;
-  T = ke /(1.5 * double(nall) * kB);
+  T = ke /(1.5 * float(nall) * kB);
 
   M->create(f, nall, Dim, "f");
   force(0);
   printf("init completed\n");
 
-  char tem[MAX_LEN];
-  sprintf(tem, "%f", T0);
-  string a = "../dump/cfg";
-  string b = ".xyz";
-  string c = tem;
-  c = a+c+b;
-  const char *str = c.c_str();
-  f2 = fopen(str, "w");
-  f1 = fopen("../dump/log.dat", "w");
-  output();
-  fclose(f2);fclose(f1);
+  //char tem[MAX_LEN];
+  //sprintf(tem, "%f", T0);
+  //string a = "../dump/cfg";
+  //string b = ".xyz";
+  //string c = tem;
+  //c = a+c+b;
+  //const char *str = c.c_str();
+  //f2 = fopen(str, "w");
+  //f1 = fopen("../dump/log.dat", "w");
+  //output();
+  //fclose(f2);fclose(f1);
 
   printf("ke = %f pe = %f T = %f\n",ke, pe, T);
 
@@ -181,25 +181,25 @@ void ThreeD::init()
 
 void ThreeD::MDLoop(int k)
 {
-  double TT = T0;
-  double Gc = (Tt - T0)/(N - 1);
+  float TT = T0;
+  float Gc = (Tt - T0)/(N - 1);
   string a = "../dump/cfg";
   string b = ".xyz";
   printf("\n");
-  for(int i = 0; i < N; i++){
-    char temp[MAX_LEN];
-    sprintf(temp, "%f", TT);
-    string c = temp;
-    cfg[i] = a+c+b;
-    TT += Gc;
-  }
-  
-  f1 = fopen("../dump/log.dat", "w");
-  fprintf(f1,"#step time ke pe\n");
-  
-  const char *cstr = cfg[k].c_str();
-  printf("%s\n", cstr);
-  f2 = fopen(cstr, "w");
+  //for(int i = 0; i < N; i++){
+  //  char temp[MAX_LEN];
+  //  sprintf(temp, "%f", TT);
+  //  string c = temp;
+  //  cfg[i] = a+c+b;
+  //  TT += Gc;
+  //}
+  //
+  //f1 = fopen("../dump/log.dat", "w");
+  //fprintf(f1,"#step time ke pe\n");
+  //
+  //const char *cstr = cfg[k].c_str();
+  //printf("%s\n", cstr);
+  //f2 = fopen(cstr, "w");
 
   for(istep = 0; istep < nstep; istep++){
     //increase v by half
@@ -212,14 +212,18 @@ void ThreeD::MDLoop(int k)
       for(int j = 0; j < 3; j++) x[i][j] += v[i][j] * dt;
     }
    
-    //printf("//calculate force\n");
+	float TT = T0;
+	float Gc = (Tt - T0) / (N - 1);
+	TT = TT + k * Gc;
+	pe = 0.0;
+	float coef = sqrt(24. * tau * m * kB * TT / dt);//coef to calculate w
     force(k);
 
     //increase v by another half
     for(int i = 0; i < nall; i++){
     for(int j = 0; j < 3; j++) v[i][j] += f[i][j] * inv_m * hdt; 
     }
-
+	
     //calculate ke
     ke = 0.;
     for(int i = 0; i < nall; i++)
@@ -228,40 +232,40 @@ void ThreeD::MDLoop(int k)
     }
     ke *= 0.5 * m; t += dt;
     
-    T = ke / (1.5 * double(nall) * kB);
+    T = ke / (1.5 * float(nall) * kB);
 
    if(istep % ifreq == 0){
-    printf("step %d ke %f pe %f T %f\n", istep, ke, pe, T);
+    printf("step %d ke %f pe %f T %f TT %f coef %f\n", istep, ke, pe, T, TT, coef);
    }
-   output();
+   //output();
   } 
 
-  fclose(f1);fclose(f2);
+  //fclose(f1);fclose(f2);
 }
 
 /* ----------------------------output------------------------------------------ */
 
-void ThreeD::output()
-{
-  fprintf(f1, "%d %lg %lg %lg %lg\n", istep, t, ke, pe, T);
-  fprintf(f2, "%d\n", nall);
-  fprintf(f2, "t = %f\n", t);
-  for(int i = 0;i < nall; i++){
-    fprintf(f2, "%s", Atom);
-    for(int j = 0; j < 3; j++) fprintf(f2, " %f",x[i][j]);
-    fprintf(f2, "\n");
-  }  
-  return;
-}
+//void ThreeD::output()
+//{
+//  fprintf(f1, "%d %lg %lg %lg %lg\n", istep, t, ke, pe, T);
+//  fprintf(f2, "%d\n", nall);
+//  fprintf(f2, "t = %f\n", t);
+//  for(int i = 0;i < nall; i++){
+//    fprintf(f2, "%s", Atom);
+//    for(int j = 0; j < 3; j++) fprintf(f2, " %f",x[i][j]);
+//    fprintf(f2, "\n");
+//  }  
+//  return;
+//}
 
 
 /* ----------------------------output------------------------------------------ 
 void ThreeD::CNP()
 {
-  double Q;
-  double dx[3] = {0.0,0.0,0.0};//displacement between two atoms in 3D
-  double hL[3] = {0.5 * L[0], 0.5 * L[1], 0.5 * L[2]};
-  double r, r2;
+  float Q;
+  float dx[3] = {0.0,0.0,0.0};//displacement between two atoms in 3D
+  float hL[3] = {0.5 * L[0], 0.5 * L[1], 0.5 * L[2]};
+  float r, r2;
  
   for (int i = 0; i < nall ; i++){
   for (int j = 0; j < nall ; j++){
@@ -284,31 +288,31 @@ void ThreeD::CNP()
 */
 void ThreeD::force(int k)
 {
-  double TT = T0;
-  double Gc = (Tt - T0)/(N - 1);
+  float TT = T0;
+  float Gc = (Tt - T0)/(N - 1);
   TT = TT + k * Gc;
- // printf("%f, %f\n", TT, Gc);
+  //printf("TT: %f\n", TT);
   pe = 0.0;
-  double coef = sqrt(24. * tau * m * kB * TT / dt);//coef to calculate w
-  double dx[3] = {0.0,0.0,0.0};//displacement between two atoms in 3D
-  double hL[3] = {0.5 * L[0], 0.5 * L[1], 0.5 * L[2]};
-  double dcut = 2.5 * sigma;
-  double dcut2 = dcut * dcut;
-  double r, r2;
+  float coef = sqrt(24. * tau * m * kB * TT / dt);//coef to calculate w
+  float dx[3] = {0.0,0.0,0.0};//displacement between two atoms in 3D
+  float hL[3] = {0.5 * L[0], 0.5 * L[1], 0.5 * L[2]};
+  float dcut = 2.5 * sigma;
+  float dcut2 = dcut * dcut;
+  float r, r2;
 
   for(int i = 0; i < nall;i++)
   for (int j = 0; j < 3;j++){
       f[i][j]=0.0;
   }
   
-  double sigma3  = sigma  * sigma * sigma;
-  double sigma6  = sigma3 * sigma3;
-  double sigma12 = sigma6 * sigma6;
+  float sigma3  = sigma  * sigma * sigma;
+  float sigma6  = sigma3 * sigma3;
+  float sigma12 = sigma6 * sigma6;
   
-  double A = 48. * epsilon * sigma12;
-  double B = -24. * epsilon * sigma6;//force constant
-  double C = 4. * epsilon * sigma12;
-  double D = -4. * epsilon * sigma6;//energy constant
+  float A = 48. * epsilon * sigma12;
+  float B = -24. * epsilon * sigma6;//force constant
+  float C = 4. * epsilon * sigma12;
+  float D = -4. * epsilon * sigma6;//energy constant
   
   //force between atom ii and atom iii
   for (int i = 0;     i < nall - 1; i++){
@@ -321,10 +325,10 @@ void ThreeD::force(int k)
       while (dx[k] < -hL[k]) dx[k] += L[k];
   //    r2 += dx[k] * dx[k];
     }
-    double r2 = dx[1]*dx[1] + dx[2]*dx[2] + dx[0]*dx[0];
+    float r2 = dx[1]*dx[1] + dx[2]*dx[2] + dx[0]*dx[0];
     //printf("i = %d, j = %d, r2 = %f\n", i, j, r2); //r2, rtemp);
-    double r6  = r2 * r2 *r2;
-    double r12 = r6 * r6;
+    float r6  = r2 * r2 *r2;
+    float r12 = r6 * r6;
     r = sqrt(r2);
     if(r2 < dcut2 ){
       for(int k = 0; k < 3; k++){
@@ -337,7 +341,7 @@ void ThreeD::force(int k)
   }
   for(int i = 0; i < nall; i++)
   for(int j = 0; j < 3; j++){
-    double w = coef *(rnd->uniform() - 0.5);
+    float w = coef *(rnd->uniform() - 0.5);
     f[i][j] += - m * tau * v[i][j] + w;
   }
 return;
@@ -346,56 +350,56 @@ return;
 /* ----------------------------------------------------- 
 */
 
-void ThreeD::input()
-{
-  char str[MAX_LEN];
-
-  printf("Please input file name:");
-  fgets(str,MAX_LEN,stdin);
-
-  char *fname;
-  char *ptr = strtok(str," \n\t\r");
-  fname = new char[strlen(ptr) + 1];
-  strcpy(fname,ptr);
-
-  FILE *fp = fopen(fname, "r");
-  if (fp == NULL){
-    printf("Error for reading");
-
-    delete []fname;
-    return;
-  }
-
-  while(fgets(str, MAX_LEN, fp))
-  {
-    char *name;
-    name = strtok(str, " \n\t\r");
-    char *data;
-    data = strtok(NULL, " \n\t\r");
-    if(strcmp(name,"atom")     == 0) strcpy(Atom, data);
-    if(strcmp(name,"timestep") == 0) dt = atof(data);
-    if(strcmp(name,"mass")     == 0) m = atof(data);
-    if(strcmp(name,"sigma")    == 0) sigma = atof(data);
-    if(strcmp(name,"epsilon")  == 0) epsilon = atof(data);
-    if(strcmp(name,"steps")    == 0) nstep = atoi(data);ifreq = nstep / 10;
-    if(strcmp(name,"xdim")     == 0) ncell[0] = atoi(data);
-    if(strcmp(name,"ydim")     == 0) ncell[1] = atoi(data);
-    if(strcmp(name,"zdim")     == 0) ncell[2] = atoi(data);
-    if(strcmp(name,"xa0")      == 0) a0[0] = atoi(data);
-    if(strcmp(name,"ya0")      == 0) a0[1] = atoi(data);
-    if(strcmp(name,"za0")      == 0) a0[2] = atoi(data);
-    if(strcmp(name,"initialT") == 0) T0 = atof(data);
-    if(strcmp(name,"targetT")  == 0) Tt = atof(data);
-    if(strcmp(name,"Crate")  == 0) Crate = atoi(data);
-    if(strcmp(name,"structure") == 0){
-      if(strcmp(data, "fcc") == 0) s_tp = 1;
-      if(strcmp(data, "bcc") == 0) s_tp = 2;
-      if(strcmp(data, "sc")  == 0) s_tp = 3;
-    }
-  }
-  fclose(fp);
-
-  delete []fname;
-return;
-  
-}
+//void ThreeD::input()
+//{
+//  char str[MAX_LEN];
+//
+//  printf("Please input file name:");
+//  fgets(str,MAX_LEN,stdin);
+//
+//  char *fname;
+//  char *ptr = strtok(str," \n\t\r");
+//  fname = new char[strlen(ptr) + 1];
+//  strcpy(fname,ptr);
+//
+//  FILE *fp = fopen(fname, "r");
+//  if (fp == NULL){
+//    printf("Error for reading");
+//
+//    delete []fname;
+//    return;
+//  }
+//
+//  while(fgets(str, MAX_LEN, fp))
+//  {
+//    char *name;
+//    name = strtok(str, " \n\t\r");
+//    char *data;
+//    data = strtok(NULL, " \n\t\r");
+//    if(strcmp(name,"atom")     == 0) strcpy(Atom, data);
+//    if(strcmp(name,"timestep") == 0) dt = atof(data);
+//    if(strcmp(name,"mass")     == 0) m = atof(data);
+//    if(strcmp(name,"sigma")    == 0) sigma = atof(data);
+//    if(strcmp(name,"epsilon")  == 0) epsilon = atof(data);
+//    if(strcmp(name,"steps")    == 0) nstep = atoi(data);ifreq = nstep / 10;
+//    if(strcmp(name,"xdim")     == 0) ncell[0] = atoi(data);
+//    if(strcmp(name,"ydim")     == 0) ncell[1] = atoi(data);
+//    if(strcmp(name,"zdim")     == 0) ncell[2] = atoi(data);
+//    if(strcmp(name,"xa0")      == 0) a0[0] = atoi(data);
+//    if(strcmp(name,"ya0")      == 0) a0[1] = atoi(data);
+//    if(strcmp(name,"za0")      == 0) a0[2] = atoi(data);
+//    if(strcmp(name,"initialT") == 0) T0 = atof(data);
+//    if(strcmp(name,"targetT")  == 0) Tt = atof(data);
+//    if(strcmp(name,"Crate")  == 0) Crate = atoi(data);
+//    if(strcmp(name,"structure") == 0){
+//      if(strcmp(data, "fcc") == 0) s_tp = 1;
+//      if(strcmp(data, "bcc") == 0) s_tp = 2;
+//      if(strcmp(data, "sc")  == 0) s_tp = 3;
+//    }
+//  }
+//  fclose(fp);
+//
+//  delete []fname;
+//return;
+//  
+//}

@@ -5,6 +5,8 @@ set(SOURCE_FILES
     "random.h"
     "ThreeD.h"
     "ThreeD.cpp"
+	"md.h"
+	"md.cu"
     )
 
 cuda_add_library(src
