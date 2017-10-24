@@ -8,7 +8,7 @@
 using namespace std;
 
 /* ---------------------------------------------------------------------- */
-ThreeD::ThreeD()
+ThreeD::ThreeD(int cellsize)
 {
   m = 1.;
   inv_m = 1./m;
@@ -20,7 +20,7 @@ ThreeD::ThreeD()
   dt = 0.0005;
   tau = 0.01 / dt;//in fact inv_tau
   hdt = 0.5 * dt;
-  sigma = 1.; epsilon = 1.;
+  sigma = 1./cellsize; epsilon = 1.;
   M = NULL; 
   f1 = f2 = NULL;
   x = f = v = NULL;
@@ -33,7 +33,7 @@ ThreeD::ThreeD()
   nunit = 4;
   strcpy(Atom, "Cr");  
   for(int i = 0; i < Dim; i++){
-    ncell[i] = 4.0;
+    ncell[i] = 8.0;
     L[i] = 0.0;
     a0[i] = 1.5;
   }
@@ -42,6 +42,17 @@ ThreeD::ThreeD()
   N = (Tt - T0)/(Crate * dt * nstep);
   cfg = new string[MAX_LEN];
 
+  float sigma3 = sigma  * sigma * sigma;
+  float sigma6 = sigma3 * sigma3;
+  float sigma12 = sigma6 * sigma6;
+
+  A = 48. * epsilon * sigma12;
+  B = -24. * epsilon * sigma6;//force constant
+  C = 4. * epsilon * sigma12;
+  D = -4. * epsilon * sigma6;//energy constant
+
+  dcut = 2.5 * sigma;
+  dcut2 = dcut * dcut;
 
   return;
 }
@@ -65,7 +76,10 @@ void ThreeD::cell_init(int k)
     case 1:{
     nall = nunit = 4;//fcc
     for(int i = 0; i < Dim; i++) nall *= ncell[i];
-    for(int i = 0; i < Dim; i++) L[i] = float(ncell[i]) * a0[i];  
+	for (int i = 0; i < Dim; i++) {
+		L[i] = float(ncell[i]) * a0[i];
+		hL[i] = 0.5 * L[i];
+	}
     M->create(cell, 4, 3, "cell");
     cell[0][0] = cell[0][1] = cell[0][2] = 0.0;
     cell[1][0] = 0.0        ; cell[1][1] = 0.5 * a0[1]; cell[1][2] = 0.5 * a0[2];
@@ -211,13 +225,13 @@ void ThreeD::MDLoop(int k)
     for(int i = 0; i < nall; i++){
       for(int j = 0; j < 3; j++) x[i][j] += v[i][j] * dt;
     }
-   
+
 	float TT = T0;
 	float Gc = (Tt - T0) / (N - 1);
 	TT = TT + k * Gc;
 	pe = 0.0;
 	float coef = sqrt(24. * tau * m * kB * TT / dt);//coef to calculate w
-    force(k);
+    force(coef);
 
     //increase v by another half
     for(int i = 0; i < nall; i++){
@@ -225,16 +239,17 @@ void ThreeD::MDLoop(int k)
     }
 	
     //calculate ke
-    ke = 0.;
-    for(int i = 0; i < nall; i++)
-    for(int k = 0; k < 3; k++){
-      ke += v[i][k] * v[i][k]; 
-    }
-    ke *= 0.5 * m; t += dt;
-    
-    T = ke / (1.5 * float(nall) * kB);
+
 
    if(istep % ifreq == 0){
+	   ke = 0.;
+	   for (int i = 0; i < nall; i++)
+		   for (int k = 0; k < 3; k++) {
+			   ke += v[i][k] * v[i][k];
+		   }
+	   ke *= 0.5 * m; t += dt;
+
+	   T = ke / (1.5 * float(nall) * kB);
     printf("step %d ke %f pe %f T %f TT %f coef %f\n", istep, ke, pe, T, TT, coef);
    }
    //output();
@@ -286,54 +301,33 @@ void ThreeD::CNP()
 
 /* ----------------------------Langevin therostat force calculation------------------------- 
 */
-void ThreeD::force(int k)
+void ThreeD::force(float coef)
 {
-  float TT = T0;
-  float Gc = (Tt - T0)/(N - 1);
-  TT = TT + k * Gc;
-  //printf("TT: %f\n", TT);
   pe = 0.0;
-  float coef = sqrt(24. * tau * m * kB * TT / dt);//coef to calculate w
-  float dx[3] = {0.0,0.0,0.0};//displacement between two atoms in 3D
-  float hL[3] = {0.5 * L[0], 0.5 * L[1], 0.5 * L[2]};
-  float dcut = 2.5 * sigma;
-  float dcut2 = dcut * dcut;
-  float r, r2;
 
   for(int i = 0; i < nall;i++)
   for (int j = 0; j < 3;j++){
       f[i][j]=0.0;
   }
-  
-  float sigma3  = sigma  * sigma * sigma;
-  float sigma6  = sigma3 * sigma3;
-  float sigma12 = sigma6 * sigma6;
-  
-  float A = 48. * epsilon * sigma12;
-  float B = -24. * epsilon * sigma6;//force constant
-  float C = 4. * epsilon * sigma12;
-  float D = -4. * epsilon * sigma6;//energy constant
-  
+
   //force between atom ii and atom iii
   for (int i = 0;     i < nall - 1; i++){
   for (int j = i + 1; j < nall ;    j++){
     //PBC
-    r2 = 0.;
+	float dx[3] = { 0.0,0.0,0.0 };//displacement between two atoms in 3D
     for (int k = 0; k < 3; k++){
       dx[k] = x[j][k] - x[i][k];
       while (dx[k] >  hL[k]) dx[k] -= L[k];
       while (dx[k] < -hL[k]) dx[k] += L[k];
-  //    r2 += dx[k] * dx[k];
     }
     float r2 = dx[1]*dx[1] + dx[2]*dx[2] + dx[0]*dx[0];
-    //printf("i = %d, j = %d, r2 = %f\n", i, j, r2); //r2, rtemp);
     float r6  = r2 * r2 *r2;
     float r12 = r6 * r6;
-    r = sqrt(r2);
     if(r2 < dcut2 ){
       for(int k = 0; k < 3; k++){
-        f[i][k] -= (A * 1./r12 + B * 1./r6) * dx[k] / r2;
-        f[j][k] += (A * 1./r12 + B * 1./r6) * dx[k] / r2;
+		  dx[k] *= (A * 1. / r12 + B * 1. / r6) / 2;
+        f[i][k] -= dx[k];
+        f[j][k] += dx[k];
       }
       pe += C * 1./r12 + D * 1./r6;
     }
@@ -341,8 +335,7 @@ void ThreeD::force(int k)
   }
   for(int i = 0; i < nall; i++)
   for(int j = 0; j < 3; j++){
-    float w = coef *(rnd->uniform() - 0.5);
-    f[i][j] += - m * tau * v[i][j] + w;
+    f[i][j] += - m * tau * v[i][j] + coef *(rnd->uniform() - 0.5);
   }
 return;
 }

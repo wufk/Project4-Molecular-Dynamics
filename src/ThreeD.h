@@ -12,7 +12,7 @@ using namespace std;
 
 class ThreeD{
 public:
-  ThreeD();
+  ThreeD(int);
   ~ThreeD();
   void MDLoop(int);
   void init();
@@ -21,10 +21,12 @@ public:
   int N;
 
 private:
+	float A, B, C, D;
+	float dcut2, dcut;
   float m, dt, hdt, sigma, epsilon, t, tau, inv_m;//hdt = half dt
   float kB, ke, pe, T, T0, Tt;
   int istep, ifreq, nunit, nstep, nall, s_tp, Crate;//s_tp = structure
-  void force(int);
+  void force(float);
   //void output();
   void cell_init(int);
   FILE *f1, *f2; 
@@ -34,6 +36,7 @@ private:
   float **x, **f, **v;
   float ncell[Dim];
   float L[Dim];
+  float hL[Dim];
   float a0[Dim];
   char Atom[2];
 };
