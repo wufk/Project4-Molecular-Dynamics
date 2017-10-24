@@ -13,7 +13,7 @@ Since materials are made of millions or trillions of atoms, this many-body simul
 
 This project simulates the heating/melting process of metals, a simple demostration to show that molecular dynamic simulation can be accelerated by deploying on multi-core processors. The graph below shows the simulation process. It is run on a system of 2048 atoms and the total iterations run is 900.
 
-![simulation] (https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/simulation.png)
+![simulation] (https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/simulation.PNG)
 
 ## Methodology
 
@@ -76,7 +76,7 @@ The naive CPU way of calculation is:
 '''
 So a naive CPU way can be done in similar ways. Very similar to the boids simulation we have done, we can do it using coherent uniform grid. The running time is as follows.
 
-![run1](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/run1.png)
+![run1](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/run1.PNG)
 
 we can see that GPU run more faster than CPU. The unform grid way is slightly faster. The reason why a coherent way does not increase performance that much might due to the fact that the number of neighboring cells of partitioning is small because of a relatively large cutoff distance in the simulation.
 
@@ -100,6 +100,4 @@ Another thing to notice is the periodic boundary conditioni(shown below). It is 
 
 For this problem using a relatively small cooling rate, interactions are not that big and atoms are not very likely to be bounced to very far away, we can use if statement. From the graph we can see that the efficiency is improved a lot.
 
-![fgraph](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/fgraph.png)
-
-![temperature](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/temperature.png)
+![fgraph](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/fgraph.PNG)
