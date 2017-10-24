@@ -13,7 +13,7 @@ Since materials are made of millions or trillions of atoms, this many-body simul
 
 This project simulates the heating/melting process of metals, a simple demostration to show that molecular dynamic simulation can be accelerated by deploying on multi-core processors. The graph below shows the simulation process. It is run on a system of 2048 atoms and the total iterations run is 900.
 
-![simulation] (https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/simulation.PNG)
+![simu](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/simulation.PNG)
 
 ## Methodology
 
