@@ -15,26 +15,26 @@ int main()
 	int s = atoi(str);
 	printf("%d\n", s);
 
-	//ThreeD *md = new ThreeD(s);
+	ThreeD *md = new ThreeD(s);
 
 
-	////if (str == 'n') {
-	////	md->input();
-	////}
-	//md->init();
-
-	//printf("CPU loop start\n");
-	//
-	//for (int i = 1; i < md->N; i++) {
-	//	clock_t begin = clock();
-	//	md->MDLoop(i);
-	//	clock_t end = clock();
-	//	printf("time run: %f\n", (float)(begin - end));
-	//	//    md->cnp();
+	//if (str == 'n') {
+	//	md->input();
 	//}
-	//
-	//printf("CPU loop complete\n");
-	//delete md;
+	md->init();
+
+	printf("CPU loop start\n");
+	
+	for (int i = 1; i < md->N; i++) {
+		clock_t begin = clock();
+		md->MDLoop(i);
+		clock_t end = clock();
+		printf("time run: %f\n", (float)(begin - end));
+		//    md->cnp();
+	}
+	
+	printf("CPU loop complete\n");
+	delete md;
 
 
 	printf("GPU start\n");

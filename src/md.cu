@@ -254,9 +254,9 @@ __global__ void kernNaiveForce(int n, glm::vec3 *pos, glm::vec3 *force, glm::vec
 	glm::vec3 w = glm::vec3(wx,wy,wz);
 
 	//#pragma unroll
-	///for (int i = 0; i < n; i++) {
-	for (int i = tid + 1; i < n; i++) {
-		//if (i == tid) continue;
+	for (int i = 0; i < n; i++) {
+	//for (int i = tid + 1; i < n; i++) {
+		if (i == tid) continue;
 		glm::vec3 dx = pos[i] - pos[tid];
 		//if (dx.x > hL.x) dx.x -= L.x;
 		//if (dx.y > hL.y) dx.y -= L.y;
