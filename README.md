@@ -22,17 +22,17 @@ The basic idea of molecular dynamics is simple. According the Newton's law,
 
 where v is velocity, t is time, m is mass and F is velocity. The displacement can be updated using calculus:
 
-![xv]()
+![xv](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/xv.png)
 
 In practice, Verlet Integration is commonly used to integrate Newton's equations. This algorithm is also often used in video games. The standard implementation of a velocity Verlet algorithm is as follows:
 
-1. ![verlet1]()
+1. ![verlet1](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/verlet1.png)
 
-2. ![verlet2]()
+2. ![verlet2](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/verlet2.png)
 
 3. Calculate the acceleration.
 
-4. ![verlet3]()
+4. ![verlet3](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/verlet3.png)
 
 The next step is to calculate the acceleration.
 
@@ -40,11 +40,11 @@ The next step is to calculate the acceleration.
 
 The potential function is the key to the simulation. Researchers are devloping  more and more accurate potential functions, or emprical potential data for simluation. In this project, Lennard-Jones potential is used. The potential is described as follows:
 
-![LJ]()
+![LJ](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/LJ.png)
 
 r is the distance between two body. Sigam and Epsilon are constants which can be fitted by experiments. Then we can calculate force using
 
-![forpo]()
+![forpo](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/forpo.png)
 
 ### Longevin thermostat
 
