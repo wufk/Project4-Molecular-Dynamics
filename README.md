@@ -15,6 +15,6 @@ This project is a simple demostration to show that molecular dynamic simulation 
 
 ## Methodology
 The basic idea of molecular dynamics is simple. According the Newton's law, 
-![equation](http://latex.codecogs.com/png.latex?F%20%3D%20m%20%5Cfrac%7Bdv%7D%7Bdt%7D)
+![newton](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/CodeCogsEqn.png)
 where v is velocity, t is time, m is mass and F is velocity.
 
