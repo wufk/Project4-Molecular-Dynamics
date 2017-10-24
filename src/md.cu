@@ -253,23 +253,24 @@ __global__ void kernNaiveForce(int n, glm::vec3 *pos, glm::vec3 *force, glm::vec
 	float wz = curand_uniform(&(states[tid])) - 0.5f;
 	glm::vec3 w = glm::vec3(wx,wy,wz);
 
-	#pragma unroll
+	//#pragma unroll
+	///for (int i = 0; i < n; i++) {
 	for (int i = tid + 1; i < n; i++) {
-
+		//if (i == tid) continue;
 		glm::vec3 dx = pos[i] - pos[tid];
-		if (dx.x > hL.x) dx.x -= L.x;
-		if (dx.y > hL.y) dx.y -= L.y;
-		if (dx.z > hL.z) dx.z -= L.z;
-		if (-dx.x > hL.x) dx.x += L.x;
-		if (-dx.y > hL.y) dx.y += L.y;
-		if (-dx.z > hL.z) dx.z += L.z;
+		//if (dx.x > hL.x) dx.x -= L.x;
+		//if (dx.y > hL.y) dx.y -= L.y;
+		//if (dx.z > hL.z) dx.z -= L.z;
+		//if (-dx.x > hL.x) dx.x += L.x;
+		//if (-dx.y > hL.y) dx.y += L.y;
+		//if (-dx.z > hL.z) dx.z += L.z;
 
-		//while (dx.x > hL.x) dx.x -= L.x;
-		//while (dx.y > hL.y) dx.y -= L.y;
-		//while (dx.z > hL.z) dx.z -= L.z;
-		//while (-dx.x > hL.x) dx.x += L.x;
-		//while (-dx.y > hL.y) dx.y += L.y;
-		//while (-dx.z > hL.z) dx.z += L.z;
+		while (dx.x > hL.x) dx.x -= L.x;
+		while (dx.y > hL.y) dx.y -= L.y;
+		while (dx.z > hL.z) dx.z -= L.z;
+		while (-dx.x > hL.x) dx.x += L.x;
+		while (-dx.y > hL.y) dx.y += L.y;
+		while (-dx.z > hL.z) dx.z += L.z;
 
 		float r2 = glm::dot(dx, dx);
 		float r6 = r2 * r2 *r2;
@@ -277,12 +278,14 @@ __global__ void kernNaiveForce(int n, glm::vec3 *pos, glm::vec3 *force, glm::vec
 
 		if (r2 < dcut2) {
 			dx *= (A * 1. / r12 + B * 1. / r6) / r2;
-			atomicAdd(&(force[tid].x), -dx.x);
-			atomicAdd(&(force[tid].y), -dx.y);
-			atomicAdd(&(force[tid].z), -dx.z);
-			atomicAdd(&(force[i].x), dx.x);
-			atomicAdd(&(force[i].y), dx.y);
-			atomicAdd(&(force[i].z), dx.z);
+			force[tid] -= dx;
+			force[i] += dx;
+			//atomicAdd(&(force[tid].x), -dx.x);
+			//atomicAdd(&(force[tid].y), -dx.y);
+			//atomicAdd(&(force[tid].z), -dx.z);
+			//atomicAdd(&(force[i].x), dx.x);
+			//atomicAdd(&(force[i].y), dx.y);
+			//atomicAdd(&(force[i].z), dx.z);
 			atomicAdd(pe, C * 1. / r12 + D * 1. / r6);
 		}
 	}
