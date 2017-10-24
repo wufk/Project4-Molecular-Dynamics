@@ -82,7 +82,7 @@ we can see that GPU run more faster than CPU. The unform grid way is slightly fa
 
 From the algorithm show above, we have double counting potential energies and forces many times. According Newton's thrid law, "There is an equaland oppsite reaction". Therefore, every time we calculate the distance of atom ai and j, we can update force(i) and force(j) at the same time and there is no need to count them twice. Furthermore, the potential energy we accumlate here does not need to be devided by 2. The algorithm is show below. Howerever, for the coherent grid, we can not do it similarly because we have partitioned the space by cells and it's not very likely to keep track of which one has been calculated or not.
 
-'''
+```
     for each atom i
         for each atom i + 1 to n
 	    if the distance(i, j) < cutoff distance
@@ -92,7 +92,7 @@ From the algorithm show above, we have double counting potential energies and fo
 		SystemPotential += someValue
 	end
     end
-'''
+```
 
 Another thing to notice is the periodic boundary conditioni(shown below). It is assumed that the system is infinitely large and there is also interatctions from around for atoms near boundary. Thus each time we calculate the distance(i,j) for atom i and j, we should scale the distance in the range of zero to half of the total scale length using a while loop. 
 
