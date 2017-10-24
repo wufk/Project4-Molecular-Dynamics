@@ -63,7 +63,7 @@ When initializing the lattice, we can simply call a kernel to assign initial pos
 Stepping over the simluation, we can see that the Verlet Integration can also be parallelized. The updation of velocity and displacement can be easily calculated by calling a simpole kernel. Therefore, the main challenge is how to compute the interations of atoms.
 
 The naive CPU way of calculation is:
-'''
+```
     SystemPotential
     for each atom i
         for each atom j not equal to i
@@ -73,7 +73,7 @@ The naive CPU way of calculation is:
 	end
     end
     SystemPotential /= 2;
-'''
+```
 So a naive CPU way can be done in similar ways. Very similar to the boids simulation we have done, we can do it using coherent uniform grid. The running time is as follows.
 
 ![run1](https://github.com/wufk/Project4-Molecular-Dynamics/blob/master/images/run1.PNG)
